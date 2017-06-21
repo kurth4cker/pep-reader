@@ -20,7 +20,7 @@ except ImportError:
 # turn off certificate verify
 ssl._create_default_https_context = ssl._create_unverified_context
 
-__version__='0.1.0'
+__version__='0.1.1'
 
 class Pep:
 
@@ -41,10 +41,10 @@ class Pep:
         print("Downloading %s..." % url)
 
         try:
-            with urlopen(url) as r:
-                txt = r.read().decode()
-                title = re.findall(r"Title: (.+?)\n", txt)[0]
-                self.fname = "%s/PEP-%04d %s.txt" % (self.peppath, self.num, title)
+            r = urlopen(url)
+            txt = r.read().decode()
+            title = re.findall(r"Title: (.+?)\n", txt)[0]
+            self.fname = "%s/PEP-%04d %s.txt" % (self.peppath, self.num, title)
         except HTTPError as e:
             print(e)
             sys.exit(1)
