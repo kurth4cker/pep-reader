@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from __future__ import print_function
 
@@ -7,9 +7,9 @@ import re
 import sys
 import os
 import argparse
-from pathlib import Path
+from glob import glob
 
-## python 2
+## py2
 try:
     from urllib.request import urlopen
     from urllib.error import HTTPError
@@ -62,18 +62,17 @@ class Pep:
         sys.exit(os.system("%s '%s'" % (self.editor, p)))
 
     def read_or_get(self):
-        fn = "PEP-%04d*" % self.num
+        g = "%s/PEP-%04d*" % (self.peppath, self.num)
         try:
-            p = next(Path(self.peppath).glob(fn))
-            self.read(str(p))
-        except StopIteration:
+            p = glob(g)[0]
+            self.read(p)
+        except IndexError:
             self.get()
             self.read(self.fname)
 
     def _mk_path(self, path):
-        p = Path(path)
-        if not p.exists():
-            p.mkdir()
+        if not os.path.exists(path):
+            os.mkdir(path)
 
 def main():
     parser = argparse.ArgumentParser(description="Download and read a PEP.")
