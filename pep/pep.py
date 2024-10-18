@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python3
 from __future__ import print_function
 
 import ssl
@@ -27,6 +26,8 @@ class Pep:
 
     peppath = '%s/.peps' % os.environ['HOME']
     pepurls = (
+        "https://raw.githubusercontent.com/python/peps/refs/heads/main/peps/pep-%04d.rst",
+        "https://raw.githubusercontent.com/python/peps/refs/heads/main/peps/pep-%04d.txt",
         "https://raw.githubusercontent.com/python/peps/master/pep-%04d.txt",
         "https://raw.githubusercontent.com/python/peps/master/pep-%04d.rst",
     )
