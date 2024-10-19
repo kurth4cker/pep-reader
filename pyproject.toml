@@ -23,7 +23,7 @@ classifiers = [
 dynamic = ["version"]
 
 [project.scripts]
-pep = "pep.pep:main"
+pep = "pep:main"
 
 [tool.setuptools.dynamic]
-version = {attr = "pep.pep.__version__"}
+version = {attr = "pep.__version__"}
