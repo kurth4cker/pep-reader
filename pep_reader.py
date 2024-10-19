@@ -1,6 +1,3 @@
-from __future__ import print_function
-
-import ssl
 import re
 import sys
 import os
@@ -10,9 +7,6 @@ from glob import glob
 from urllib.request import urlopen
 from urllib.error import HTTPError
 
-# turn off certificate verify
-ssl._create_default_https_context = ssl._create_unverified_context
-
 __version__ = '0.1.1'
 
 
@@ -20,8 +14,8 @@ class Pep:
 
     peppath = '{}/.peps'.format(os.environ['HOME'])
     pepurls = (
-        "https://raw.githubusercontent.com/python/peps/master/pep-{:04d}.txt",
-        "https://raw.githubusercontent.com/python/peps/master/pep-{:04d}.rst",
+        "https://raw.githubusercontent.com/python/peps/refs/heads/main/peps/pep-{:04d}.rst",
+        "https://raw.githubusercontent.com/python/peps/refs/heads/main/peps/pep-{:04d}.txt",
     )
 
     def __init__(self, num, editor="less"):
