@@ -7,13 +7,8 @@ import os
 import argparse
 from glob import glob
 
-# py2
-try:
-    from urllib.request import urlopen
-    from urllib.error import HTTPError
-except ImportError:
-    from urllib2 import urlopen
-    from urllib2 import HTTPError
+from urllib.request import urlopen
+from urllib.error import HTTPError
 
 # turn off certificate verify
 ssl._create_default_https_context = ssl._create_unverified_context
@@ -23,24 +18,20 @@ __version__ = '0.1.1'
 
 class Pep:
 
-    peppath = '%s/.peps' % os.environ['HOME']
+    peppath = '{}/.peps'.format(os.environ['HOME'])
     pepurls = (
-        "https://raw.githubusercontent.com/python/peps/master/pep-%04d.txt",
-        "https://raw.githubusercontent.com/python/peps/master/pep-%04d.rst",
+        "https://raw.githubusercontent.com/python/peps/master/pep-{:04d}.txt",
+        "https://raw.githubusercontent.com/python/peps/master/pep-{:04d}.rst",
     )
 
-    def __init__(self, num, editor):
+    def __init__(self, num, editor="less"):
         self.num = int(num)
-
-        if editor is None:
-            self.editor = 'less'
-        else:
-            self.editor = editor
+        self.editor = editor
 
     def get(self):
         for pepurl in self.pepurls:
-            url = pepurl % self.num
-            print("Downloading %s..." % url)
+            url = pepurl.format(self.num)
+            print(f"Downloading {url}...")
 
             try:
                 r = urlopen(url)
@@ -49,10 +40,10 @@ class Pep:
                 continue
 
             title = re.findall(r"Title: (.+?)\n", txt)[0]
-            self.fname = "%s/PEP-%04d %s.txt" % (self.peppath, self.num, title)
+            self.fname = f"{self.peppath}/PEP-{self.num:04d} {title}.txt"
             break
         else:
-            print("Unable to download PEP %d" % self.num)
+            print(f"Unable to download PEP {self.num}")
             sys.exit(1)
 
         self._mk_path(self.peppath)
@@ -65,10 +56,10 @@ class Pep:
             sys.exit(1)
 
     def read(self, p):
-        sys.exit(os.system("%s '%s'" % (self.editor, p)))
+        sys.exit(os.system(f"{self.editor} {p!r}"))
 
     def read_or_get(self):
-        g = "%s/PEP-%04d*" % (self.peppath, self.num)
+        g = f"{self.peppath}/PEP-{self.num:04d}*"
         try:
             p = glob(g)[0]
             self.read(p)
@@ -82,9 +73,16 @@ class Pep:
 
 
 def main():
+    default_pager = "less"
+    for pager in 'PAGER', 'VISUAL', 'EDITOR':
+        if pager in os.environ:
+            default_pager = os.environ[pager]
+            break
+
     parser = argparse.ArgumentParser(description="Download and read a PEP.")
     parser.add_argument('pep_num', help="PEP number")
     parser.add_argument('-e', '--editor',
+                        default=default_pager,
                         help="Choose a editor, default is less.")
     args = parser.parse_args()
     pep = Pep(args.pep_num, args.editor)
